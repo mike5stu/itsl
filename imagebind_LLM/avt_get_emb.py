@@ -9,10 +9,10 @@ import gradio as gr
 from ImageBind.models import imagebind_model_cls
 from ImageBind.models.imagebind_model_cls import ModalityType
 #v+a
-llama_dir = "/home/data2t2/dc/llama_model_weights_nyanko7"
+llama_dir = "llama_model_weights_nyanko7"
 
-data_dir="/home/dc/LLaMA-Adapter/Mintrecdata"
-test_tsv=pd.read_table("/home/dc/LLaMA-Adapter/Mintrecdata/dev.tsv",dtype=str)
+data_dir="Mintrecdata"
+test_tsv=pd.read_table("Mintrecdata/dev.tsv",dtype=str)
 test_tsv["file_path"]=data_dir+"/raw_data/"+test_tsv["season"]+"/"+test_tsv["episode"]+"/"+test_tsv["clip"]+".mp4"
 
 # print(test_tsv)
