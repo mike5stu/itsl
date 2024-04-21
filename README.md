@@ -15,13 +15,40 @@ Multimodal Intent Recognition (MIR) is a critical task involving the discernment
 To begin, create a virtual environment for the project. This code floder "Imagebind_LLM" is placed in LLaMA-Adapter project to ultilize their functions and pretrained parameters. The Mintrec data path is hardcoded on top of code files.
 
 ### Setup
-conda create -n llama_adapter -y python=3.8
-conda activate llama_adapter
-conda install pytorch cudatoolkit -c pytorch -y
+```
+# create conda env
+conda create -n imagebind_LLM python=3.9 -y
+conda activate imagebind_LLM
+# install ImageBind
+cd ImageBind
 pip install -r requirements.txt
-pip install -e .
-
+# install other dependencies
+cd ../
+pip install -r requirements.txt
+```
+Obtain the LLaMA backbone weights using [this form](https://forms.gle/jk851eBVbX1m5TAv5). Please note that checkpoints from unofficial sources (e.g., BitTorrent) may contain malicious code and should be used with care. Organize the downloaded file in the following structure
+```
+  /path/to/llama_model_weights
+  ├── 7B
+  │   ├── checklist.chk
+  │   ├── consolidated.00.pth
+  │   └── params.json
+  └── tokenizer.model
+  ```
+* The current stable version of ImageBind-LLM is built upon [Open-Chinese-LLaMA](https://github.com/OpenLMLab/OpenChineseLLaMA) for better multilingual support. The following command downloads a pre-processed delta-version patch and automatically merges it into LLaMA weights:
+  ```bash
+  python get_chinese_llama.py --llama_dir=/path/to/llama_model_weights
+  ```
+  After running, the Open-Chinese-LLaMA weights will be recovered in `/path/to/llama_model_weights`:
+  ```
+  /path/to/llama_model_weights
+  ├── 7B
+  ├── 7B_chinese
+  └── tokenizer.model
+  ```
+  
 ### Training
+```
 torchrun --nproc_per_node 8 engine_finetune.py \
          --model Llama7B_adapter \
          --llama_model_path $TARGET_FOLDER/ \
@@ -35,7 +62,7 @@ torchrun --nproc_per_node 8 engine_finetune.py \
          --blr 9e-3 \
          --weight_decay 0.02 \
          --output_dir ./checkpoint/
-
+```
 ### Inference
 1. Run avt_get_emb.py to get embeddings (adjust input in code to ablate modalities).
 2. Run classifier.py to get results.
